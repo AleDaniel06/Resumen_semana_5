@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/bts_sql_server_v2.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,6 +17,24 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;cursor:none}
+
+/* ── CURSOR ── */
+#cur{
+  width:40px;height:40px;border-radius:50%;
+  border:2px solid var(--p);
+  position:fixed;top:0;left:0;pointer-events:none;z-index:9999;
+  mix-blend-mode:multiply;
+  transition:width .3s,height .3s,background .3s,transform .08s;
+  transform:translate(-50%,-50%);
+}
+#cur2{
+  width:6px;height:6px;background:var(--p);border-radius:50%;
+  position:fixed;top:0;left:0;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform .04s;
+}
+body:has(button:hover) #cur,
+body:has(a:hover) #cur{ width:64px;height:64px;background:rgba(124,58,237,0.1) }
 
 /* ── SPLASH ── */
 #splash{
@@ -50,12 +69,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);overfl
 
 @keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
-
-/* ── CURSOR CUSTOM ── */
-#cur{width:8px;height:8px;background:var(--p);border-radius:50%;position:fixed;pointer-events:none;z-index:999;transition:transform .1s}
-#cur-b{width:36px;height:36px;border:1.5px solid var(--p2);border-radius:50%;position:fixed;pointer-events:none;z-index:998;transition:transform .25s cubic-bezier(.25,1,.5,1),top .14s,left .14s}
-.hovered #cur{transform:scale(0.5);background:var(--rose)}
-.hovered #cur-b{transform:scale(1.4);border-color:var(--rose);background:rgba(244,63,94,0.05)}
 
 /* ── MAIN ── */
 #main{opacity:0;transition:opacity .7s .1s}
@@ -207,6 +220,63 @@ tbody tr:hover{background:var(--p3)}
 tbody td{padding:13px 16px;font-size:.82rem;color:#444;border-bottom:1px solid rgba(124,58,237,.07);vertical-align:top;line-height:1.6}
 tbody td:first-child{font-weight:700;color:var(--ink)}
 
+/* ── MODAL ── */
+.ov{
+  display:none;position:fixed;inset:0;z-index:600;
+  background:rgba(13,10,30,.6);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.ov.on{display:flex;animation:fd .25s}
+.mbox{
+  background:#fff;border-radius:24px;max-width:640px;width:100%;
+  max-height:88vh;overflow-y:auto;padding:36px 40px;
+  box-shadow:0 32px 80px rgba(0,0,0,.18);position:relative;
+  animation:su .35s cubic-bezier(.34,1.56,.64,1);
+  border:1px solid rgba(124,58,237,.1);
+}
+.mbox h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;color:var(--ink);margin-bottom:16px}
+.mbox p,.mbox li{font-size:.87rem;line-height:1.85;color:#555;margin-bottom:8px}
+.mbox ul{padding-left:18px}
+.mbox .hl{background:var(--p3);border-left:3px solid var(--p);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.85rem;color:#444}
+.mcls{
+  position:absolute;top:16px;right:16px;
+  width:34px;height:34px;border-radius:50%;
+  background:var(--p3);border:none;cursor:none;color:var(--p);
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;
+  transition:background .2s;
+}
+.mcls:hover{background:var(--p);color:#fff}
+@keyframes fd{from{opacity:0}to{opacity:1}}
+@keyframes su{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:none}}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin:32px 0}
+.stat-card{
+  border-radius:18px;padding:24px 20px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.stat-n{font-family:'Syne',sans-serif;font-weight:800;font-size:2.8rem;color:#fff;line-height:1}
+.stat-l{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.8);letter-spacing:.05em;text-align:center}
+.stat-i{font-size:1.3rem;color:rgba(255,255,255,.7)}
+
+/* ── DARK SEC ── */
+.dark-sec{background:var(--ink)}
+.dark-sec .sec-eyebrow{color:var(--p2)}
+.dark-sec .sec-eyebrow::before{background:var(--p2)}
+.dark-sec h2.sec-h{color:#fff}
+.dark-sec h2.sec-h em{color:var(--p2)}
+.dark-sec .member-card{background:rgba(255,255,255,.05);border-color:rgba(124,58,237,.2)}
+.dark-sec .m-quote{color:#9ca3af}
+.dark-sec .m-name{color:#fff}
+
+/* ── COMPARE COLS ── */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}
+.cc{border-radius:14px;padding:18px}
+.cc h4{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;margin-bottom:10px}
+.cc ul{list-style:none}
+.cc li{font-size:.8rem;line-height:1.9;display:flex;align-items:flex-start;gap:7px;color:#aaa}
+.cc li::before{content:'▸';flex-shrink:0;margin-top:3px}
+
 /* ── ACCORD ── */
 .ac{border-radius:14px;overflow:hidden;margin-bottom:8px}
 .ac-hd{
@@ -229,585 +299,877 @@ tbody td:first-child{font-weight:700;color:var(--ink)}
 .ac-bd ul{padding-left:18px;margin-top:8px}
 .ac-bd li{margin-bottom:4px}
 
-/* ── REVEAL ANIM ── */
-.rv{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s}
-.rv.vis{opacity:1;transform:none}
-
-/* ── MODALS ── */
-.ov{
-  position:fixed;inset:0;z-index:900;background:rgba(13,10,30,0.4);
-  backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;
-  padding:20px;opacity:0;pointer-events:none;transition:opacity .4s ease;
+/* ── ACTIVITY ── */
+.act{
+  background:#fff;border-radius:16px;padding:20px;margin-bottom:10px;
+  border:1px solid rgba(124,58,237,.1);box-shadow:0 2px 12px rgba(124,58,237,.05);
 }
-.ov.on{opacity:1;pointer-events:all}
-.m-box{
-  background:#fff;border-radius:24px;width:100%;max-width:680px;max-height:85vh;
-  overflow-y:auto;padding:36px;position:relative;border:1px solid rgba(124,58,237,.15);
-  box-shadow:0 32px 80px rgba(13,10,30,0.25);
-  transform:translateY(20px) scale(0.97);transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+.aq{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.anum{
+  min-width:28px;height:28px;border-radius:8px;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;flex-shrink:0;
 }
-.ov.on .m-box{transform:none}
-.m-cls{
-  position:absolute;top:20px;right:20px;width:36px;height:36px;border-radius:50%;
-  background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;
-  color:var(--ink);cursor:none;transition:all .2s;
+.aq p{font-weight:600;color:var(--ink);font-size:.88rem;line-height:1.55}
+.btn-s{
+  background:var(--ink);color:#fff;border:none;
+  padding:9px 20px;border-radius:100px;cursor:none;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;
+  letter-spacing:.03em;transition:all .25s;
+  display:inline-flex;align-items:center;gap:7px;
 }
-.m-cls:hover{background:var(--rose);color:#fff}
-
-/* ── SOL EXPAND ── */
-.sol-btn{
-  width:100%;text-align:left;padding:14px 20px;background:var(--p3);
-  color:var(--p);border:1px dashed rgba(124,58,237,0.4);border-radius:12px;
-  font-weight:600;font-size:.82rem;margin-top:12px;cursor:none;
-  display:flex;align-items:center;gap:8px;transition:all .2s;
-}
-.sol-btn:hover{background:rgba(124,58,237,0.18)}
-.sol-box{
-  display:none;margin-top:10px;padding:16px 20px;
-  background:#fff;border:1px solid rgba(124,58,237,0.1);border-radius:12px;
+.btn-s:hover{background:var(--p);transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,.3)}
+.sol{
+  display:none;margin-top:14px;padding:16px;
+  background:var(--p3);border-radius:12px;
+  border-left:3px solid var(--p);
+  font-size:.83rem;color:#444;line-height:1.85;
   animation:fd .3s;
 }
-.sol-box.on{display:block}
+.sol.on{display:block}
+.sol strong{color:var(--p)}
 
-@keyframes fd{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* ── CODE ── */
+.code{
+  background:#0D0A1E;color:#c4b5fd;
+  padding:14px 18px;border-radius:12px;font-family:'Space Mono',monospace;
+  font-size:.75rem;line-height:1.75;margin:10px 0;overflow-x:auto;
+  border:1px solid rgba(124,58,237,.2);
+}
+.kw{color:#f472b6}.fn{color:#67e8f9}.st{color:#fcd34d}.cm{color:#6b7280;font-style:italic}
+
+/* ── GOLDEN ── */
+#golden{background:var(--ink)}
+.gold-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.gc{
+  background:rgba(255,255,255,.04);border:1px solid rgba(245,158,11,.15);
+  border-radius:16px;padding:20px;
+}
+.gc h4{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.gc ul{list-style:none}
+.gc li{font-size:.8rem;color:#9ca3af;line-height:1.9;display:flex;align-items:flex-start;gap:6px}
+.gc li::before{content:'·';color:var(--gold);font-weight:700;flex-shrink:0}
+
+/* ── FOOTER ── */
+footer{background:#07050F;color:#444;text-align:center;padding:32px;font-size:.8rem}
+footer strong{color:var(--p2)}
+
+/* ── REVEAL ── */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .65s,transform .65s}
+.rv.vis{opacity:1;transform:none}
 
 /* ── DIVIDER ── */
 .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.15),transparent);max-width:900px;margin:0 auto}
-
-footer{background:#fff;padding:40px;text-align:center;font-size:.78rem;color:#888;border-top:1px solid rgba(124,58,237,.06)}
 </style>
 </head>
 <body>
 
 <div id="cur"></div>
-<div id="cur-b"></div>
+<div id="cur2"></div>
 
+<!-- ══════════════ SPLASH ══════════════ -->
 <div id="splash">
-  <p class="sp-label">Universidad Peruana Los Andes · Facultad de Ingeniería</p>
-  <h1 class="sp-h">You never walk <span>alone</span></h1>
-  <p class="sp-sub">Capítulo 1: Introducción a Microsoft SQL Server 2022</p>
+  <p class="sp-label">Universidad Peruana Los Andes · Ing. Raúl Fernández Bejarano</p>
+  <h1 class="sp-h">The BTS<br><span>Learning Experience</span></h1>
+  <p class="sp-sub">Microsoft SQL Server 2022 — Capítulo 1</p>
   <div class="sp-img">
-    <img src="https://media.giphy.com/media/KDJdLucBMJZxVPxPOs/giphy.gif" referrerpolicy="no-referrer" alt="BTS Group">
+    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMHh1eXp6MmZ5Y2FwNXk0bHhrM2ZpbnVtZXM1NjZ1ZDVibHAxbWhocCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/KDJdLucBMJZxVPxPOs/giphy.gif" alt="BTS">
   </div>
   <button class="sp-btn" onclick="go()"><span>✦ COMENZAR EXPERIENCIA</span></button>
 </div>
 
+<!-- ══════════════ MAIN ══════════════ -->
 <div id="main">
 
-  <nav>
-    <div class="nav-logo">SQL Server 2022 <em>×</em> BTS</div>
-    <div class="nav-links">
-      <a href="#hero" class="nl act">Inicio</a>
-      <a href="#s1" class="nl">Conceptos</a>
-      <a href="#s2" class="nl">Arquitectura</a>
-      <a href="#s3" class="nl">Ecosistema</a>
-      <a href="#s4" class="nl">Versiones</a>
-      <a href="#s5" class="nl">Instalación</a>
-      <a href="#s6" class="nl">Actividades</a>
-    </div>
-  </nav>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">BTS <em>×</em> SQL 2022</div>
+  <div class="nav-links">
+    <a href="#hero"  class="nl act">Inicio</a>
+    <a href="#s1"    class="nl">Conceptos</a>
+    <a href="#s2"    class="nl">Tecnologías</a>
+    <a href="#s3"    class="nl">Ediciones</a>
+    <a href="#s4"    class="nl">SSMS</a>
+    <a href="#s5"    class="nl">Insights</a>
+    <a href="#s6"    class="nl">Activities</a>
+    <a href="#golden" class="nl">Golden</a>
+  </div>
+</nav>
 
-  <section id="hero">
-    <div class="hero-blob" style="width:600px;height:600px;background:var(--p3);top:-200px;right:-150px;opacity:.5"></div>
-    <div class="hero-blob" style="width:400px;height:400px;background:#fce7f3;bottom:-100px;left:-80px;opacity:.5"></div>
-    <div class="hero-inner">
-      <div class="rv">
-        <div class="hero-tag">Introducción Global</div>
-        <h1 class="hero-h">Sistemas de<br>Bases de Datos <em>2022</em></h1>
-        <p class="hero-desc">La evolución de Microsoft SQL Server hacia un entorno multiplataforma absoluto, con integración inteligente en la nube, alto rendimiento y seguridad de vanguardia.</p>
-        <div class="chips">
-          <span class="chip"><i class="fas fa-shield-alt"></i> Máxima Seguridad</span>
-          <span class="chip"><i class="fas fa-bolt"></i> Rendimiento Inteligente</span>
-          <span class="chip"><i class="fas fa-infinity"></i> Azure Connected</span>
-        </div>
-      </div>
-      <div class="hero-img-wrap rv" style="transition-delay: .15s">
-        <div class="hero-gif">
-          <img src="https://media.giphy.com/media/BQcAUhjJt5N0pJ7zA0/giphy.gif" referrerpolicy="no-referrer" alt="RM Presentation">
-        </div>
-        <div class="hero-badge">
-          <i class="fas fa-signature"></i>
-          <div>
-            <div style="font-size:.72rem;color:#888;font-weight:400">Expositor Principal</div>
-            <div>RM — Kim Namjoon</div>
-          </div>
-        </div>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-blob" style="width:600px;height:600px;background:var(--p3);top:-200px;right:-150px;opacity:.5"></div>
+  <div class="hero-blob" style="width:400px;height:400px;background:#fce7f3;bottom:-100px;left:-80px;opacity:.5"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">Capítulo 1</div>
+      <h1 class="hero-h">Introducción a<br><em>SQL Server 2022</em></h1>
+      <p class="hero-desc">La plataforma de bases de datos más poderosa de Microsoft — en Windows, Linux y la nube, con IA integrada.</p>
+      <div class="chips">
+        <span class="chip"><i class="fas fa-database"></i> RDBMS</span>
+        <span class="chip"><i class="fas fa-cloud"></i> Multiplataforma</span>
+        <span class="chip"><i class="fas fa-brain"></i> IA Integrada</span>
+        <span class="chip"><i class="fas fa-shield-alt"></i> Alta Seguridad</span>
       </div>
     </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <section id="s1" class="sec" style="background:#fff">
-    <div class="sec-inner">
-      <div class="sec-eyebrow">Sección 01</div>
-      <h2 class="sec-h">Fundamentos del <em>Modelado de Datos</em></h2>
-      
-      <div class="member-card rv">
-        <div class="m-gif"><img src="https://media.giphy.com/media/BQcAUhjJt5N0pJ7zA0/giphy.gif" referrerpolicy="no-referrer" alt="RM"></div>
-        <div>
-          <div class="m-name">RM — Kim Namjoon</div>
-          <div class="m-role">Líder de Proyecto · Sustento Académico</div>
-          <div class="m-quote">"Profesor, para comprender la potencia de SQL Server 2022, primero debemos dominar las estructuras que organizan el conocimiento del mundo real. Permítame guiarlo."</div>
-        </div>
+    <div class="hero-img-wrap">
+      <div class="hero-gif">
+        <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnlqcTF2bXNidnFxaGwyZGJndXlrY25ubzhjMHJtd2todHA4bmJkNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/BQcAUhjJt5N0pJ7zA0/giphy.gif" alt="RM">
       </div>
-
-      <div class="cards rv">
-        <div class="card" onclick="openM('m-db')">
-          <div class="card-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-database"></i></div>
-          <h3>Base de Datos (BD)</h3>
-          <p>Un contenedor lógico y estructurado diseñado para almacenar colecciones organizadas de datos...</p>
-          <span class="more"><i class="fas fa-plus"></i> Concepto Completo</span>
-        </div>
-        <div class="card" onclick="openM('m-sgbd')">
-          <div class="card-icon" style="background:linear-gradient(135deg,#F43F5E,#fb7185)"><i class="fas fa-sliders-h"></i></div>
-          <h3>SGBD / RDBMS</h3>
-          <p>El software de interfaz crucial que gestiona el almacenamiento, consulta, seguridad y consistencia...</p>
-          <span class="more"><i class="fas fa-plus"></i> Concepto Completo</span>
-        </div>
-        <div class="card" onclick="openM('m-model')">
-          <div class="card-icon" style="background:linear-gradient(135deg,#06B6D4,#22d3ee)"><i class="fas fa-project-diagram"></i></div>
-          <h3>Modelo de Datos</h3>
-          <p>La abstracción conceptual que define reglas abstractas, relaciones y restricciones de integridad...</p>
-          <span class="more"><i class="fas fa-plus"></i> Concepto Completo</span>
-        </div>
+      <div class="hero-badge">
+        <i class="fas fa-star"></i>
+        <div><div style="font-size:.72rem;color:#888;font-weight:400">presentado por</div><div>RM — Namjoon</div></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <div class="divider"></div>
+<div class="divider"></div>
 
-  <section id="s2" class="sec" style="background:var(--bg)">
-    <div class="sec-inner">
-      <div class="sec-eyebrow">Sección 02</div>
-      <h2 class="sec-h">Procesamiento Analítico vs Transaccional (<em>OLTP / OLAP</em>)</h2>
+<!-- ══ S1: CONCEPTOS (RM) ══ -->
+<section id="s1" class="sec" style="background:#fff">
+<div class="sec-inner">
+  <div class="sec-eyebrow">Sección 01</div>
+  <h2 class="sec-h">Conceptos <em>Clave</em></h2>
 
-      <div class="member-card rv">
-        <div class="m-gif"><img src="https://media.giphy.com/media/U4QxAwXz1CZ5fuiPwU/giphy.gif" referrerpolicy="no-referrer" alt="SUGA"></div>
-        <div>
-          <div class="m-name">SUGA — Min Yoongi</div>
-          <div class="m-role">Director Analítico · Procesamiento de Datos</div>
-          <div class="m-quote">"Los datos masivos requieren enfoques arquitectónicos completamente diferentes según el objetivo empresarial. No confundamos la alta velocidad transaccional con la profundidad del Business Intelligence."</div>
-        </div>
-      </div>
+  <div class="member-card rv">
+    <div class="m-gif"><img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnlqcTF2bXNidnFxaGwyZGJndXlrY25ubzhjMHJtd2todHA4bmJkNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/BQcAUhjJt5N0pJ7zA0/giphy.gif" alt="RM"></div>
+    <div>
+      <div class="m-name">RM — Kim Namjoon</div>
+      <div class="m-role">Líder · Marco Teórico</div>
+      <div class="m-quote">"Profesor, los fundamentos son la base de todo. Haga clic en cada tarjeta para explorar el concepto completo."</div>
+    </div>
+  </div>
 
-      <p class="hero-desc rv" style="max-width:none; margin-bottom:32px">SQL Server 2022 es uno de los pocos motores híbridos capaces de gestionar con excelencia ambas cargas de trabajo, minimizando los cuellos de botella mediante hardware moderno y paralelismo masivo.</p>
+  <div class="cards rv">
 
-      <div class="tbl rv">
-        <table>
-          <thead>
-            <tr>
-              <th>Criterio Comparativo</th>
-              <th>Entorno Transaccional (OLTP)</th>
-              <th>Entorno Analítico (OLAP)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Objetivo Principal</td>
-              <td>Registrar operaciones comerciales cotidianas e inmediatas en tiempo real.</td>
-              <td>Sustentar la toma de decisiones estratégicas mediante análisis multidimensional.</td>
-            </tr>
-            <tr>
-              <td>Naturaleza de Consultas</td>
-              <td>Inserciones, actualizaciones y eliminaciones rápidas (Queries CRUD simples).</td>
-              <td>Consultas masivas, agregaciones complejas (SUM, AVG) sobre millones de registros.</td>
-            </tr>
-            <tr>
-              <td>Diseño de la Base de Datos</td>
-              <td>Altamente normalizada (Formas Normales 3NF) para eliminar redundancia de datos.</td>
-              <td>Desnormalizada, basada en esquemas de Estrella (Star) o Copo de Nieve (Snowflake).</td>
-            </tr>
-            <tr>
-              <td>Volumen de Datos</td>
-              <td>Relativamente bajo por transacción individual (Kilobytes o Megabytes).</td>
-              <td>Masivo, consolidando históricos de múltiples fuentes (Gigabytes a Terabytes).</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="card" onclick="open_m('m1')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)"><i class="fas fa-database"></i></div>
+      <h3>SQL Server 2022</h3>
+      <p>RDBMS de Microsoft. Multiplataforma con IA integrada.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Explorar</div>
+    </div>
 
-      <div class="flips rv">
-        <div class="flip">
-          <div class="flip-in">
-            <div class="ff" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)">
-              <i class="fas fa-shopping-cart"></i>
-              <span>Ejemplo OLTP</span>
-            </div>
-            <div class="fb">
-              <strong>Sistemas Transaccionales</strong>
-              <p>Puntos de venta de supermercados, transferencias bancarias o reservaciones de boletos de avión en tiempo real.</p>
-            </div>
-          </div>
-        </div>
-        <div class="flip">
-          <div class="flip-in">
-            <div class="ff" style="background:linear-gradient(135deg,#F43F5E,#fb7185)">
-              <i class="fas fa-chart-line"></i>
-              <span>Ejemplo OLAP</span>
-            </div>
-            <div class="fb">
-              <strong>Sistemas Analíticos</strong>
-              <p>Tableros de Power BI que consolidan las tendencias de ventas globales de los últimos cinco años fiscales.</p>
-            </div>
-          </div>
-        </div>
+    <div class="card" onclick="open_m('m2')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#F43F5E,#fb7185)"><i class="fas fa-bolt"></i></div>
+      <h3>OLTP</h3>
+      <p>Transacciones en tiempo real. Alta velocidad y concurrencia.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Explorar</div>
+    </div>
+
+    <div class="card" onclick="open_m('m3')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#06B6D4,#22d3ee)"><i class="fas fa-chart-bar"></i></div>
+      <h3>OLAP</h3>
+      <p>Análisis multidimensional en cubos de datos masivos.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Explorar</div>
+    </div>
+
+    <div class="card" onclick="open_m('m4')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#10B981,#6ee7b7)"><i class="fas fa-warehouse"></i></div>
+      <h3>Data Warehouse</h3>
+      <p>Repositorio analítico centralizado para toma de decisiones.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Explorar</div>
+    </div>
+
+    <div class="card" onclick="open_m('m5')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#F59E0B,#fcd34d)"><i class="fas fa-shopping-cart"></i></div>
+      <h3>E-Commerce</h3>
+      <p>Comercio electrónico: B2B, B2C, C2B y C2C.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Explorar</div>
+    </div>
+
+    <div class="card" onclick="open_m('m6')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#8B5CF6,#ec4899)"><i class="fas fa-balance-scale"></i></div>
+      <h3>OLTP vs OLAP</h3>
+      <p>Comparativa técnica definitiva entre ambas arquitecturas.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Ver tabla</div>
+    </div>
+
+  </div>
+
+  <!-- Flip cards -->
+  <div class="flips rv">
+    <div class="flip">
+      <div class="flip-in">
+        <div class="ff" style="background:linear-gradient(135deg,#F43F5E,#7C3AED)"><i class="fas fa-bolt"></i><span>OLTP</span></div>
+        <div class="fb"><strong>Tiempo Real</strong><p>Transacciones pequeñas, rápidas, ACID. Bancos, retail, aerolíneas.</p></div>
       </div>
     </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <section id="s3" class="sec" style="background:#fff">
-    <div class="sec-inner">
-      <div class="sec-eyebrow">Sección 03</div>
-      <h2 class="sec-h">Componentes Core del <em>Ecosistema SQL Server</em></h2>
-
-      <p class="hero-desc rv" style="max-width:none; margin-bottom:32px">Microsoft SQL Server 2022 no es simplemente un almacén aislado de tablas; constituye una suite empresarial integrada por subsistemas especializados de alta fidelidad organizativa.</p>
-
-      <div class="rv" style="max-width:800px; margin:0 auto">
-        <div class="ac">
-          <div class="ac-hd" onclick="togAc(this)">
-            <h4><i class="fas fa-server"></i> Database Engine (Motor de la Base de Datos)</h4>
-            <i class="fas fa-chevron-down ac-chev"></i>
-          </div>
-          <div class="ac-bd">
-            <p>Es el núcleo operativo absoluto del sistema. Se encarga del almacenamiento físico de los registros en páginas de datos de 8KB, la asignación de extensiones, la ejecución del búfer en memoria RAM y la estricta protección de la consistencia mediante el WAL (Write-Ahead Logging).</p>
-          </div>
-        </div>
-
-        <div class="ac">
-          <div class="ac-hd" onclick="togAc(this)">
-            <h4><i class="fas fa-project-diagram"></i> Integration Services (SSIS)</h4>
-            <i class="fas fa-chevron-down ac-chev"></i>
-          </div>
-          <div class="ac-bd">
-            <p>La plataforma empresarial nativa de Microsoft para procesos de Extracción, Transformación y Carga (ETL). Permite interconectar fuentes dispares (Archivos Excel, XML, Oracle, JSON) para limpiar y unificar datos dentro de un repositorio centralizado de manera automatizada.</p>
-          </div>
-        </div>
-
-        <div class="ac">
-          <div class="ac-hd" onclick="togAc(this)">
-            <h4><i class="fas fa-cubes"></i> Analysis Services (SSAS)</h4>
-            <i class="fas fa-chevron-down ac-chev"></i>
-          </div>
-          <div class="ac-bd">
-            <p>El motor de datos analíticos diseñado específicamente para Business Intelligence. Soporta tanto modelos tabulares modernos en memoria como la arquitectura multidimensional clásica (Cubos OLAP), procesando consultas analíticas avanzadas a velocidades ultrarrápidas.</p>
-          </div>
-        </div>
-
-        <div class="ac">
-          <div class="ac-hd" onclick="togAc(this)">
-            <h4><i class="fas fa-print"></i> Reporting Services (SSRS)</h4>
-            <i class="fas fa-chevron-down ac-chev"></i>
-          </div>
-          <div class="ac-bd">
-            <p>La suite de generación de informesempresariales paginados e interactivos. Ofrece herramientas de diseño web y de escritorio para desplegar reportes tabulares, gráficos complejos e informes ejecutivos distribuidos automáticamente por correo electrónico o portales web institucionales.</p>
-          </div>
-        </div>
+    <div class="flip">
+      <div class="flip-in">
+        <div class="ff" style="background:linear-gradient(135deg,#06B6D4,#0284c7)"><i class="fas fa-chart-bar"></i><span>OLAP</span></div>
+        <div class="fb"><strong>Análisis Histórico</strong><p>Cubos multidimensionales. BI, finanzas, reportes ejecutivos.</p></div>
       </div>
     </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <section id="s4" class="sec" style="background:var(--bg)">
-    <div class="sec-inner">
-      <div class="sec-eyebrow">Sección 04</div>
-      <h2 class="sec-h">Ediciones y <em>Licenciamiento Comercial</em></h2>
-
-      <div class="member-card rv">
-        <div class="m-gif"><img src="https://media.giphy.com/media/RiiVFKow0eymLkTnMP/giphy.gif" referrerpolicy="no-referrer" alt="V"></div>
-        <div>
-          <div class="m-name">V — Kim Taehyung</div>
-          <div class="m-role">Especialista Visual · Arquitectura Comercial</div>
-          <div class="m-quote">"Profesor, cada modelo de negocio requiere una escala distinta de infraestructura. SQL Server ofrece alternativas desde el desarrollo individual gratuito hasta entornos corporativos masivos."</div>
-        </div>
-      </div>
-
-      <div class="tbl rv">
-        <table>
-          <thead>
-            <tr>
-              <th>Edición Oficial</th>
-              <th>Perfil de Uso Académico / Corporativo</th>
-              <th>Capacidad de Cómputo Nativa</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Enterprise Edition</td>
-              <td>Entornos de misión crítica con volúmenes de datos masivos y alta disponibilidad extrema.</td>
-              <td>Ilimitada. Acceso completo a todo el hardware del servidor físico o nube.</td>
-            </tr>
-            <tr>
-              <td>Standard Edition</td>
-              <td>Bases de datos de rango medio para empresas medianas o departamentos independientes.</td>
-              <td>Limitada a un máximo de 4 sockets físicos o 24 núcleos de CPU virtuales.</td>
-            </tr>
-            <tr>
-              <td>Developer Edition</td>
-              <td>Entornos cerrados de desarrollo, pruebas y maquetación de software de nivel profesional.</td>
-              <td>Idéntica a Enterprise en características, pero prohibida para uso en producción comercial. El uso es **Totalmente Gratuito**.</td>
-            </tr>
-            <tr>
-              <td>Express Edition</td>
-              <td>Aplicaciones de escritorio pequeñas, servidores web básicos o aprendizaje de estudiantes.</td>
-              <td>Totalmente gratuita. Limitada a 1 CPU física, 1.4 GB de RAM de buffer y un tamaño máximo de archivo de BD de **10 GB**.</td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="flip">
+      <div class="flip-in">
+        <div class="ff" style="background:linear-gradient(135deg,#10B981,#059669)"><i class="fas fa-warehouse"></i><span>Data Warehouse</span></div>
+        <div class="fb"><strong>Centralización</strong><p>Integra múltiples fuentes. Arquitectura dimensional (estrella).</p></div>
       </div>
     </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <section id="s5" class="sec" style="background:#fff">
-    <div class="sec-inner">
-      <div class="sec-eyebrow">Sección 05</div>
-      <h2 class="sec-h">Requisitos Críticos e <em>Instalación Práctica</em></h2>
-      
-      <p class="hero-desc rv" style="max-width:none; margin-bottom:32px">Para asegurar el correcto despliegue de SQL Server 2022 en un entorno informático, la infraestructura de hardware y el sistema operativo anfitrión deben cumplir estrictamente con los siguientes parámetros estándar establecidos por Microsoft.</p>
-
-      <div class="cards rv" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))">
-        <div class="card">
-          <div class="card-icon" style="background:var(--ink)"><i class="fas fa-desktop"></i></div>
-          <h3>Arquitectura de Procesamiento</h3>
-          <p>Requiere obligatoriamente un procesador de **64 bits (x64)** AMD o Intel. Los procesadores de 32 bits (x86) ya no están soportados de ninguna forma en la versión 2022. La velocidad de reloj mínima es de 1.4 GHz (Recomendado 2.0 GHz o superior).</p>
-        </div>
-        <div class="card">
-          <div class="card-icon" style="background:var(--p)"><i class="fas fa-memory"></i></div>
-          <h3>Memoria de Acceso Aleatorio (RAM)</h3>
-          <p>El mínimo absoluto para arrancar la edición Express es de 512 MB, mientras que las ediciones Standard y Developer exigen un mínimo de **2 GB** en entornos básicos. Para cargas de producción real, se recomiendan al menos 4 GB por instancia para el manejo eficiente de índices.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon" style="background:var(--rose)"><i class="fas fa-hdd"></i></div>
-          <h3>Almacenamiento en Disco Duro</h3>
-          <p>El motor base de datos requiere un espacio libre mínimo en disco de **6 GB** para la instalación básica de archivos binarios del sistema. Este espacio debe expandirse significativamente según el crecimiento proyectado de las bases de datos de usuario y los archivos de transacción.</p>
-        </div>
-      </div>
-
-      <div class="tbl rv" style="margin-top:32px">
-        <table>
-          <thead>
-            <tr>
-              <th>Paso Secuencial</th>
-              <th>Fase de Configuración Práctica (SSMS y Motor)</th>
-              <th>Detalles de la Acción Recomendada</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Paso 1</td>
-              <td>Ejecución del Setup de Instalación</td>
-              <td>Descargar el asistente oficial desde Microsoft, seleccionar el tipo de instalación "Personalizada" y elegir una ruta limpia en el sistema de archivos (NTFS recomendado).</td>
-            </tr>
-            <tr>
-              <td>Paso 2</td>
-              <td>Selección de Características de la Instancia</td>
-              <td>Marcar la opción obligatoria de "Servicios de Motor de Base de Datos" (Database Engine Services). Opcionalmente se pueden seleccionar SSAS o conectores avanzados de replicación.</td>
-            </tr>
-            <tr>
-              <td>Paso 3</td>
-              <td>Configuración del Tipo de Instancia</td>
-              <td>Definir si se utilizará la Instancia Predeterminada (MSSQLSERVER) o una Instancia con Nombre personalizado para ejecutar múltiples versiones aisladas en el mismo servidor.</td>
-            </tr>
-            <tr>
-              <td>Paso 4</td>
-              <td>Configuración de Autenticación de Seguridad</td>
-              <td>Establecer el **Modo Mixto (Autenticación de SQL Server y de Windows)**. Esto permite el acceso nativo del usuario administrador maestro `sa`, asignando una contraseña de alta complejidad.</td>
-            </tr>
-            <tr>
-              <td>Paso 5</td>
-              <td>Despliegue de Herramientas de Gestión Administrativa</td>
-              <td>SQL Server 2022 ya no empaqueta la interfaz gráfica en el instalador base. Se debe descargar de forma independiente e instalar **SQL Server Management Studio (SSMS)** para conectarse al servidor.</td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="flip">
+      <div class="flip-in">
+        <div class="ff" style="background:linear-gradient(135deg,#F59E0B,#ef4444)"><i class="fas fa-globe"></i><span>E-Commerce</span></div>
+        <div class="fb"><strong>4 Tipos</strong><p>B2B · B2C · C2B · C2C según la relación comercial entre partes.</p></div>
       </div>
     </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <section id="s6" class="sec" style="background:var(--bg)">
-    <div class="sec-inner">
-      <div class="sec-eyebrow">Sección Práctica</div>
-      <h2 class="sec-h">El <em>Activity Hub</em> Universitario</h2>
-
-      <div class="member-card rv">
-        <div class="m-gif"><img src="https://media.giphy.com/media/cICFWznrX3QdIXAwIv/giphy.gif" referrerpolicy="no-referrer" alt="J-HOPE"></div>
-        <div>
-          <div class="m-name">J-HOPE — Jung Hoseok</div>
-          <div class="m-role">Coordinador Práctico · Dinámica y Soluciones</div>
-          <div class="m-quote">"¡Profesor! La teoría toma vida cuando la aplicamos a la resolución de problemas informáticos del mundo real. Haga clic en los botones interactivos para evaluar el desarrollo completo de nuestra práctica académica."</div>
-        </div>
-      </div>
-
-      <div class="rv" style="max-width:850px; margin:0 auto">
-        
-        <div class="ac" style="margin-bottom: 16px">
-          <div class="ac-hd" style="background:#fff; padding:22px" onclick="togAc(this)">
-            <h4><i class="fas fa-question-circle"></i> Caso de Estudio 1: Determinación de Entornos de Datos</h4>
-            <i class="fas fa-chevron-down ac-chev"></i>
-          </div>
-          <div class="ac-bd" style="background:#fff; padding:22px">
-            <p><strong>Enunciado de la Actividad:</strong> Una prestigiosa cadena de supermercados recopila diariamente millones de compras de clientes en sus terminales de punto de venta (POS) en mil sucursales a nivel nacional. Simultáneamente, el equipo de analítica de negocios y la junta directiva necesitan evaluar el comportamiento histórico de ventas mensuales de los últimos cuatro años para planificar las compras logísticas del próximo trimestre.<br><br>
-            Analice el escenario anterior y determine con precisión qué componentes de software del ecosistema de bases de datos e infraestructuras de procesamiento de información se requieren para dar soporte óptimo a ambas necesidades operativas corporativas.</p>
-            
-            <button class="sol-btn" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta Académica</button>
-            <div class="sol-box">
-              <strong style="color:var(--p); font-size:0.9rem; display:block; margin-bottom:8px">Resolución Académica de Nivel Universitario:</strong>
-              <p style="margin-bottom:12px">El escenario corporativo de la corporación de supermercados presenta de manera clásica e inequívoca la coexistencia de dos necesidades de procesamiento de información con objetivos técnicos radicalmente opuestos pero complementarios. Para dar una solución arquitectónica sólida e integral, se deben implementar y desplegar las siguientes tecnologías del ecosistema informático de datos:</p>
-              <ul style="list-style-type: disc; padding-left: 20px">
-                <li><strong>Para la Operación en los Puntos de Venta (POS):</strong> Se requiere estructurar un entorno transaccional puro basado en una arquitectura **OLTP (Online Transaction Processing)**. El motor central de bases de datos recomendado es **Microsoft SQL Server 2022 (Edición Enterprise)** debido al volumen crítico de concurrencia masiva a nivel nacional. Las bases de datos operativas deben estar diseñadas con un alto nivel de normalización (Tercera Forma Normal - 3NF) para mitigar anomalías de inserción y asegurar transacciones instantáneas y consistentes bajo los principios ACID.</li>
-                <li><strong>Para el Análisis Estratégico de la Junta Directiva:</strong> Se requiere diseñar y poblar un Repositorio de Almacenamiento Centralizado o **Data Warehouse**. Este entorno operará bajo el paradigma analítico **OLAP (Online Analytical Processing)**. Los datos transaccionales históricos no se consultarán directamente en los servidores POS de producción para evitar degradación de rendimiento; en su lugar, se procesarán mediante la siguiente suite técnica especializada de Microsoft:
-                  <ul style="list-style-type: circle; padding-left: 20px; margin-top:6px">
-                    <li><strong>Microsoft SQL Server Integration Services (SSIS):</strong> Para programar flujos periódicos de Extracción, Transformación y Carga (ETL) encargados de extraer los tickets de compra diarios de las mil sucursales, limpiar duplicados, unificar formatos monetarios y cargarlos en el Data Warehouse corporativo.</li>
-                    <li><strong>Microsoft SQL Server Analysis Services (SSAS):</strong> Para construir modelos tabulares o cubos multidimensionales de datos estructurados bajo esquemas desnormalizados de estrella o copo de nieve, facilitando agregaciones de velocidad milimétrica.</li>
-                    <li><strong>Visualización de Datos Corporativos:</strong> Consolidación del cubo OLAP mediante conexiones nativas a tableros ejecutivos en **Power BI** o reportes analíticos automatizados vía **SQL Server Reporting Services (SSRS)**.</li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="ac" style="margin-bottom: 16px">
-          <div class="ac-hd" style="background:#fff; padding:22px" onclick="togAc(this)">
-            <h4><i class="fas fa-question-circle"></i> Caso de Estudio 2: Justificación de Ediciones y Restricciones de Hardware</h4>
-            <i class="fas fa-chevron-down ac-chev"></i>
-          </div>
-          <div class="ac-bd" style="background:#fff; padding:22px">
-            <p><strong>Enunciado de la Actividad:</strong> Una Startup tecnológica emergente que está desarrollando una aplicación móvil para servicios de entrega a domicilio local cuenta actualmente con recursos financieros altamente limitados. Un programador junior sugiere instalar directamente la versión de prueba gratuita de SQL Server Enterprise en la computadora portátil personal de un desarrollador (la cual posee una arquitectura Intel de 32 bits, 4GB de memoria RAM total y 20GB de espacio libre en disco mecánico) para lanzar la base de datos de producción a los clientes reales de la aplicación.<br><br>
-            Evalúe críticamente la recomendación del programador junior. Identifique las limitaciones de arquitectura de hardware y los riesgos legales o técnicos implicados en su propuesta, justificando la selección correcta de edición de SQL Server 2022.</p>
-            
-            <button class="sol-btn" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta Académica</button>
-            <div class="sol-box">
-              <strong style="color:var(--rose); font-size:0.9rem; display:block; margin-bottom:8px">Análisis Crítico y Dictamen Técnico:</strong>
-              <p style="margin-bottom:12px">La propuesta emitida por el programador junior es completamente inviable desde una perspectiva estrictamente de compatibilidad de hardware, altamente peligrosa a nivel técnico, e ilegal bajo las normativas de licenciamiento corporativo de Microsoft. A continuación, se detallan con precisión técnica los tres errores estructurales del planteamiento:</p>
-              <ul style="list-style-type: decimal; padding-left: 20px">
-                <li><strong>Incompatibilidad Crítica de Arquitectura de Hardware:</strong> El sistema operativo y el procesador de la computadora portátil del desarrollador son de **32 bits (x86)**. Microsoft SQL Server 2022 ha retirado de forma definitiva el soporte para plataformas de 32 bits, requiriendo de forma obligatoria una arquitectura de procesamiento de **64 bits (x64)** para su instalación. El software arrojará un error fatal y ni siquiera iniciará la secuencia del instalador.</li>
-                <li><strong>Riesgo de Licenciamiento y Consecuencias Legales:</strong> El uso de una edición de evaluación (Evaluation Edition) o la edición Developer en un entorno con conexiones de clientes reales de producción viola de forma directa los Términos de Licencia de Software de Microsoft. Esto puede acarrear multas económicas severas para la Startup durante auditorías de software externas. Las versiones de evaluación expiran estrictamente a los 180 días de uso continuo, lo que causaría un colapso operativo completo del servicio al apagar automáticamente el motor de datos.</li>
-                <li><strong>Saturación de Recursos e Inestabilidad de Sistema:</strong> La computadora cuenta con apenas 4GB de memoria RAM y almacenamiento en un disco mecánico convencional. El motor de SQL Server Enterprise compite agresivamente por la RAM para la ecuación de consultas. Al verse confinado en una laptop de bajas especificaciones, provocará una paginación masiva en el disco duro (Thrashing), destruyendo los tiempos de respuesta de la app y causando desconexiones constantes para los repartidores y clientes de la plataforma.</li>
-              </ul>
-              <p style="margin-top:12px; font-weight:700; color:var(--mint)"><i class="fas fa-check-circle"></i> Solución Técnico e Infraestructura Recomendada:</p>
-              <p style="font-size:0.8rem">La Startup debe migrar de inmediato su entorno de bases de datos a un servidor virtualizado o computadora con procesador x64. En lugar de violar licencias, debe implementar **Microsoft SQL Server 2022 Express Edition**. Esta edición es **100% gratuita para uso comercial y producción**. Dado que la empresa es local y emergente, el límite nativo de la versión Express (1 CPU física, 1.4 GB de caché en RAM y un tamaño de base de datos tope de 10 GB) es perfectamente suficiente para gestionar el catálogo inicial de restaurantes, usuarios y pedidos de forma estable, segura y legal durante su primer año de operaciones en el mercado.</p>
-            </div>
-          </div>
-        </div>
-
+    <div class="flip">
+      <div class="flip-in">
+        <div class="ff" style="background:linear-gradient(135deg,#7C3AED,#ec4899)"><i class="fas fa-server"></i><span>SQL Server</span></div>
+        <div class="fb"><strong>Híbrido</strong><p>Windows · Linux · Azure. IA, seguridad avanzada y escalabilidad.</p></div>
       </div>
     </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <section id="golden" class="sec" style="background:#fff; text-align:center">
-    <div class="sec-inner" style="max-width:700px">
-      <div class="sec-eyebrow" style="justify-content:center">Cierre de la Experiencia</div>
-      <h2 class="sec-h" style="margin-bottom:32px">The <em>Golden Summary</em></h2>
-      
-      <div class="sp-img" style="margin:0 auto 28px; width:130px; height:130px">
-        <img src="https://media.giphy.com/media/LMbJJ6XudS5cRHaGJ7/giphy.gif" referrerpolicy="no-referrer" alt="Jungkook">
-      </div>
-
-      <div class="m-name">JUNGKOOK — Jeon Jung-kook</div>
-      <div class="m-role" style="margin-bottom:16px">Sintetizador General · Conclusión de Oro</div>
-      <p class="m-quote" style="font-size:.95rem; max-width:none">"Profesor, hemos recorrido la vanguardia tecnológica de las estructuras de datos organizacionales. Microsoft SQL Server 2022 consolida la intersección exacta entre la confiabilidad de los motores transaccionales tradicionales y la agilidad de los servicios en la nube híbrida. Con estas herramientas e infraestructura, estamos totalmente preparados para diseñar soluciones empresariales escalables y eficientes. ¡Gracias por su atención! 보라해 💜"</p>
-    </div>
-  </section>
-
-  <footer>
-    <p>© 2026 Resumen Académico Interactivo de Ingeniería de Sistemas — Desarrollado en colaboración con BTS & BT21 Universe.</p>
-  </footer>
-
+  </div>
 </div>
+</section>
 
-<div id="m-db" class="ov" onclick="closeM(this)">
-  <div class="m-box" onclick="event.stopPropagation()">
-    <button class="m-cls" onclick="closeAllM()"><i class="fas fa-times"></i></button>
-    <h3 style="font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:14px; color:var(--p)"><i class="fas fa-database"></i> Base de Datos (Concepto Extendido)</h3>
-    <p style="font-size:.88rem; color:#444; line-height:1.75">Una base de datos es una infraestructura lógica diseñada para agrupar, indexar y conservar grandes volúmenes de información digital de manera organizada e interrelacionada. Su fin primordial es representar entidades tangibles o conceptuales del mundo real (como registros académicos de alumnos, catálogos de inventarios industriales o historiales clínicos hospitalarios) transformándolos en tablas compuestas por campos estructurados (columnas) y registros individuales (filas), permitiendo búsquedas inmediatas y la preservación persistente del conocimiento organizacional a lo largo del tiempo.</p>
+<div class="divider"></div>
+
+<!-- ══ S2: TECNOLOGÍAS (SUGA) ══ -->
+<section id="s2" class="sec" style="background:var(--bg)">
+<div class="sec-inner">
+  <div class="sec-eyebrow">Sección 02</div>
+  <h2 class="sec-h">Tecnologías del <em>Ecosistema</em></h2>
+
+  <div class="member-card rv">
+    <div class="m-gif"><img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTRjcnB2NXFtZWJraWt2a2JvbGd0enZrYWJ2N2c0MHFzOTUyeTFnbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/U4QxAwXz1CZ5fuiPwU/giphy.gif" alt="SUGA"></div>
+    <div>
+      <div class="m-name">SUGA — Min Yoongi</div>
+      <div class="m-role">Análisis Técnico Crítico</div>
+      <div class="m-quote">"Los datos no mienten. Aquí el ecosistema completo de SQL Server, con toda la precisión que merece."</div>
+    </div>
+  </div>
+
+  <div class="rv">
+    <div class="ac">
+      <div class="ac-hd" onclick="togAc(this)">
+        <h4><i class="fas fa-server"></i> Database Engine — Motor de BD</h4>
+        <i class="fas fa-chevron-down ac-chev"></i>
+      </div>
+      <div class="ac-bd">
+        <p>Núcleo de SQL Server. Almacena, procesa y protege los datos.</p>
+        <ul>
+          <li>Gestión de tablas, vistas, índices y restricciones</li>
+          <li>Procesamiento transaccional con propiedades <strong>ACID</strong></li>
+          <li>Seguridad robusta con control de usuarios y roles</li>
+          <li>Recuperación ante fallos y copias de seguridad</li>
+          <li>Escalabilidad horizontal en múltiples servidores</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ac">
+      <div class="ac-hd" onclick="togAc(this)">
+        <h4><i class="fas fa-cube"></i> SSAS — Analysis Services</h4>
+        <i class="fas fa-chevron-down ac-chev"></i>
+      </div>
+      <div class="ac-bd">
+        <p>Plataforma OLAP. Crea y gestiona cubos de datos multidimensionales.</p>
+        <ul>
+          <li>Cubos con tablas, gráficos y grillas de datos</li>
+          <li>Diseñador visual + lenguaje de consulta <strong>MDX</strong></li>
+          <li>Integración con Excel, SharePoint y Power BI</li>
+          <li>Programación con Visual C# o Visual Basic</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ac">
+      <div class="ac-hd" onclick="togAc(this)">
+        <h4><i class="fas fa-file-alt"></i> SSRS — Reporting Services</h4>
+        <i class="fas fa-chevron-down ac-chev"></i>
+      </div>
+      <div class="ac-bd">
+        <p>Genera, publica y administra informes en línea y en papel.</p>
+        <ul>
+          <li>Informes estáticos o interactivos (tablas, gráficos, grillas)</li>
+          <li>Diseñador visual + lenguaje <strong>RDL</strong></li>
+          <li>Publicación por portal web o correo electrónico</li>
+          <li>Integración con SQL Server y SharePoint</li>
+        </ul>
+      </div>
+    </div>
+    <div class="ac">
+      <div class="ac-hd" onclick="togAc(this)">
+        <h4><i class="fas fa-exchange-alt"></i> SSIS — Integration Services (ETL)</h4>
+        <i class="fas fa-chevron-down ac-chev"></i>
+      </div>
+      <div class="ac-bd">
+        <p>Plataforma <strong>ETL</strong> (Extract, Transform, Load) para integración y migración de datos.</p>
+        <ul>
+          <li>Conecta BD relacionales, CSV, Excel y servicios web</li>
+          <li>Transformación: limpiar, combinar y manipular datos</li>
+          <li>Migraciones de sistemas y soluciones Data Warehouse</li>
+          <li>Automatización de tareas y procesos de negocio</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="tbl rv" style="margin-top:32px">
+    <table>
+      <thead><tr><th>Componente</th><th>Sigla</th><th>Función</th><th>Tecnología</th></tr></thead>
+      <tbody>
+        <tr><td>Database Engine</td><td>—</td><td>Almacenamiento y gestión relacional</td><td>T-SQL</td></tr>
+        <tr><td>Analysis Services</td><td>SSAS</td><td>Cubos OLAP · BI</td><td>MDX, C#</td></tr>
+        <tr><td>Reporting Services</td><td>SSRS</td><td>Generación de reportes</td><td>RDL, C#</td></tr>
+        <tr><td>Integration Services</td><td>SSIS</td><td>ETL · Migración de datos</td><td>DTSX, C#</td></tr>
+        <tr><td>Azure-SSIS Runtime</td><td>—</td><td>ETL en la nube híbrida</td><td>Azure DF</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ S3: EDICIONES (J-HOPE) ══ -->
+<section id="s3" class="sec" style="background:#fff">
+<div class="sec-inner">
+  <div class="sec-eyebrow">Sección 03</div>
+  <h2 class="sec-h">Ediciones de <em>SQL Server</em></h2>
+
+  <div class="tbl rv">
+    <table>
+      <thead><tr><th>Edición</th><th>Para quién</th><th>Costo</th><th>¿Producción?</th></tr></thead>
+      <tbody>
+        <tr><td>🏢 Enterprise</td><td>Grandes corporaciones, cargas críticas</td><td>Alto</td><td>✅ Sí</td></tr>
+        <tr><td>📊 Estándar</td><td>Departamentos y PyMEs</td><td>Medio</td><td>✅ Sí</td></tr>
+        <tr><td>🌐 Web</td><td>Proveedores de hosting web</td><td>Bajo</td><td>✅ Sí</td></tr>
+        <tr><td>💻 Developer</td><td>Desarrolladores y testers (= Enterprise)</td><td>Gratis</td><td>❌ Solo dev</td></tr>
+        <tr><td>🆓 Express</td><td>Estudiantes y apps pequeñas</td><td>Gratis</td><td>⚠️ Limitado</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rv" style="background:var(--p3);border-radius:14px;padding:16px 20px;border-left:3px solid var(--p);margin-top:4px;font-size:.85rem;color:#444;line-height:1.75">
+    <strong style="color:var(--p)">Express LocalDB:</strong> Versión ultra-ligera de Express. Sin configuración, ejecución en modo usuario, ideal para desarrollo local rápido.
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ S4: SSMS (JIMIN) ══ -->
+<section id="s4" class="sec" style="background:var(--bg)">
+<div class="sec-inner">
+  <div class="sec-eyebrow">Sección 04</div>
+  <h2 class="sec-h">SQL Server <em>Management Studio</em></h2>
+
+  <div class="rv" style="background:#fff;border-radius:16px;padding:18px 22px;border:1px solid rgba(124,58,237,.1);margin-bottom:32px;font-size:.87rem;color:#555;line-height:1.8">
+    <strong style="color:var(--p)">SSMS</strong> es la aplicación cliente gráfica para crear, gestionar y consultar bases de datos en SQL Server — localmente o en la nube.
+  </div>
+
+  <div class="cards rv">
+    <div class="card" onclick="open_m('ms1')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#06B6D4,#0284c7)"><i class="fas fa-play-circle"></i></div>
+      <h3>Ej. 1.1 — Iniciar SSMS</h3>
+      <p>Conectar al servidor: nombre, IP, localhost o punto (.)</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Ver pasos</div>
+    </div>
+    <div class="card" onclick="open_m('ms2')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED)"><i class="fas fa-info-circle"></i></div>
+      <h3>Ej. 1.2 — Caja "Acerca de"</h3>
+      <p>Verificar versiones de componentes instalados del ecosistema.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Ver pasos</div>
+    </div>
+    <div class="card" onclick="open_m('ms3')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#10B981,#059669)"><i class="fas fa-sitemap"></i></div>
+      <h3>Ej. 1.3 & 1.4 — Explorador</h3>
+      <p>Navegar objetos de la BD: tablas, seguridad, vistas del sistema.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Ver pasos</div>
+    </div>
+    <div class="card" onclick="open_m('ms4')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#F43F5E,#e11d48)"><i class="fas fa-server"></i></div>
+      <h3>Ej. 1.5 — Servidores Registrados</h3>
+      <p>Registrar localhost en el panel de Servidores registrados.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Ver pasos</div>
+    </div>
+    <div class="card" onclick="open_m('ms5')">
+      <div class="card-icon" style="background:linear-gradient(135deg,#0D0A1E,#3d2e60)"><i class="fas fa-code"></i></div>
+      <h3>Ej. 1.6 & 1.7 — Panel de Código</h3>
+      <p>Ejecutar T-SQL y el script Northwind para crear la base de datos.</p>
+      <div class="more"><i class="fas fa-arrow-right"></i> Ver código</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ S5: INSIGHTS (V) ══ -->
+<section id="s5" class="sec dark-sec">
+<div class="sec-inner">
+  <div class="sec-eyebrow">Sección 05</div>
+  <h2 class="sec-h">Visual <em>Insights</em></h2>
+
+  <div class="member-card rv">
+    <div class="m-gif"><img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWY5N3dsdnh2ODR0MjZhbGhxa2ZlNHB0YWNoMzhzODV0N3I3bG9ibyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/RiiVFKow0eymLkTnMP/giphy.gif" alt="V"></div>
+    <div>
+      <div class="m-name">V — Kim Taehyung</div>
+      <div class="m-role">Visual Insights · Datos Más Impactantes</div>
+      <div class="m-quote">"Los números que realmente importan, profesor. De un vistazo."</div>
+    </div>
+  </div>
+
+  <div class="stats rv">
+    <div class="stat-card" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)">
+      <div class="stat-i"><i class="fas fa-database"></i></div>
+      <div class="stat-n">5</div>
+      <div class="stat-l">Tecnologías del Ecosistema</div>
+    </div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#F43F5E,#fb7185)">
+      <div class="stat-i"><i class="fas fa-layer-group"></i></div>
+      <div class="stat-n">5</div>
+      <div class="stat-l">Ediciones Disponibles</div>
+    </div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#06B6D4,#0284c7)">
+      <div class="stat-i"><i class="fas fa-globe"></i></div>
+      <div class="stat-n">3</div>
+      <div class="stat-l">Plataformas Soportadas</div>
+    </div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#10B981,#059669)">
+      <div class="stat-i"><i class="fas fa-code"></i></div>
+      <div class="stat-n">7</div>
+      <div class="stat-l">Ejercicios en SSMS</div>
+    </div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#F59E0B,#d97706)">
+      <div class="stat-i"><i class="fas fa-shopping-cart"></i></div>
+      <div class="stat-n">4</div>
+      <div class="stat-l">Tipos de E-Commerce</div>
+    </div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#8B5CF6,#ec4899)">
+      <div class="stat-i"><i class="fas fa-star"></i></div>
+      <div class="stat-n">20</div>
+      <div class="stat-l">Actividades Resueltas</div>
+    </div>
+  </div>
+
+  <div class="cmp rv">
+    <div class="cc" style="background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.2)">
+      <h4 style="color:#fb7185"><i class="fas fa-bolt" style="margin-right:7px"></i>OLTP</h4>
+      <ul>
+        <li>Transacciones en tiempo real</li>
+        <li>Alta velocidad y concurrencia</li>
+        <li>BD relacional normalizada (ACID)</li>
+        <li>Bancos, aerolíneas, retail</li>
+        <li>Operaciones pequeñas y frecuentes</li>
+      </ul>
+    </div>
+    <div class="cc" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2)">
+      <h4 style="color:#6ee7b7"><i class="fas fa-warehouse" style="margin-right:7px"></i>Data Warehouse</h4>
+      <ul>
+        <li>Análisis histórico a gran escala</li>
+        <li>Consultas complejas multidimensionales</li>
+        <li>Arquitectura dimensional (estrella)</li>
+        <li>BI, ejecutivos, análisis estratégico</li>
+        <li>Integra múltiples fuentes vía ETL</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="divider" style="background:linear-gradient(90deg,transparent,rgba(124,58,237,.15),transparent)"></div>
+
+<!-- ══ S6: ACTIVITY HUB (J-HOPE) ══ -->
+<section id="s6" class="sec" style="background:#fff">
+<div class="sec-inner">
+  <div class="sec-eyebrow">Activity Hub ⚡</div>
+  <h2 class="sec-h">Actividades <em>Resueltas</em></h2>
+
+  <div class="member-card rv">
+    <div class="m-gif"><img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnEwYmI3NHp1am1zamUxY3d4cWZqNm5vb3dncmF4MzB6OHRjaWI3byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/cICFWznrX3QdIXAwIv/giphy.gif" alt="J-HOPE"></div>
+    <div>
+      <div class="m-name">J-HOPE — Jung Hoseok</div>
+      <div class="m-role">Activity Hub Leader</div>
+      <div class="m-quote">"¡Haz clic en 'Ver Respuesta' para descubrir cada solución académica de élite, profesor!"</div>
+    </div>
+  </div>
+
+  <!-- Teóricas -->
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--ink);margin:28px 0 16px;display:flex;align-items:center;gap:10px">
+    <span style="width:36px;height:36px;background:var(--p);border-radius:10px;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem">📚</span>
+    Preguntas Teóricas
+  </div>
+
+  <div class="rv">
+    <div class="act"><div class="aq"><div class="anum">1</div><p>En un sistema bancario OLTP, ¿qué pasaría si no se garantizan las propiedades ACID?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol">Sin ACID: <strong>Atomicidad:</strong> una transferencia puede debitarse sin acreditarse → pérdida de dinero. <strong>Consistencia:</strong> saldos en estados inválidos (negativos no autorizados). <strong>Aislamiento:</strong> dos retiros simultáneos del mismo saldo = doble gasto. <strong>Durabilidad:</strong> transacciones confirmadas pueden perderse ante fallas. Consecuencia: pérdida de integridad financiera, confianza y violación de normativas (PCI-DSS, Basilea III).</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">2</div><p>¿Cómo se diferencian OLTP y OLAP en proyectos empresariales?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>OLTP:</strong> gestiona operaciones diarias (ventas, pagos, inventarios) en tiempo real — esencial para ERP y POS. <strong>OLAP:</strong> sirve para análisis estratégico (tendencias, segmentación, rendimiento regional) sobre datos históricos. En arquitectura completa: OLTP → SSIS (ETL) → Data Warehouse → SSAS → SSRS. Son <strong>complementarios</strong>, no competidores.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">3</div><p>¿Qué beneficios aporta un Data Warehouse en una empresa de e-commerce?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>1.</strong> Visión 360° del cliente (compras + navegación + soporte). <strong>2.</strong> Análisis de tendencias por temporada/región. <strong>3.</strong> Optimización de inventario con patrones históricos. <strong>4.</strong> Segmentación B2C/C2C para campañas personalizadas de alto ROI. <strong>5.</strong> Decisiones ejecutivas basadas en datos, no intuición. <strong>6.</strong> Integración de OLTP + CRM + plataformas de pago en un solo análisis.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">4</div><p>¿Por qué SQL Server 2022 es considerado una plataforma híbrida en la nube?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol">Porque opera simultáneamente en: <strong>On-premises</strong> (Windows/Linux), <strong>nube pública</strong> (Azure SQL Database / Managed Instance) y <strong>nube híbrida</strong> (Azure-SSIS Integration Runtime ejecuta ETL en la nube con datos locales). Beneficios: migración gradual sin interrupciones, escalado dinámico, IA de Azure integrada, y disaster recovery con réplicas en nube.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">5</div><p>¿Qué riesgos existen si se usa SQL Server Express en producción crítica?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>1.</strong> Almacenamiento limitado a 10 GB por BD. <strong>2.</strong> Sin SQL Agent → sin backups automáticos = riesgo de pérdida de datos. <strong>3.</strong> Solo 1 GB RAM y 1 socket CPU → cuellos de botella bajo alta concurrencia. <strong>4.</strong> Sin Always On ni clustering → cero tolerancia a fallos. <strong>5.</strong> Sin SSAS/SSIS completos → capacidades BI mínimas. <strong>6.</strong> Sin soporte técnico Microsoft. Express es solo para desarrollo y aprendizaje.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">6</div><p>¿Qué diferencia hay entre SQL Server Developer Edition y Enterprise Edition en un proyecto académico?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol">Son <strong>técnicamente idénticas</strong> — Developer tiene toda la funcionalidad de Enterprise. La diferencia es de <strong>licenciamiento</strong>: Developer es gratuita pero prohibida en producción (solo prueba/desarrollo). Enterprise tiene licencia comercial por core (costo muy elevado). Para proyectos universitarios: <strong>Developer Edition</strong> es la elección correcta y ética — sin violar el EULA de Microsoft.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">7</div><p>¿Por qué los sistemas de BI requieren SSAS (Analysis Services)?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>1.</strong> Análisis multidimensional en cubos desde múltiples perspectivas simultáneas (imposible en SQL simple). <strong>2.</strong> Rendimiento superior: cubos pre-calculan agregaciones → consultas en segundos vs. minutos en SQL. <strong>3.</strong> Lenguaje <strong>MDX</strong> para consultas analíticas complejas. <strong>4.</strong> Integración nativa con Excel, Power BI y SharePoint. <strong>5.</strong> Definición de KPIs directamente en el modelo de datos.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">8</div><p>¿Qué papel cumple SSRS en un sistema de gestión hospitalaria?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>1.</strong> Reportes clínicos: historial médico y tratamientos en PDF/web. <strong>2.</strong> Estadísticas de ocupación: camas, tasa de internamiento por área. <strong>3.</strong> Gestión financiera: facturación, seguros, cuentas por cobrar. <strong>4.</strong> Control de medicamentos: inventario y alertas de vencimiento. <strong>5.</strong> Indicadores de calidad (SUSALUD): infecciones, readmisiones, tiempos de espera. <strong>6.</strong> Distribución automática de reportes a directivos por correo o portal.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">9</div><p>¿En qué escenarios preferir SSIS frente a consultas manuales de integración?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol">SSIS es preferible cuando: <strong>1.</strong> Se integran múltiples fuentes heterogéneas (BD + CSV + Excel + APIs). <strong>2.</strong> Se requieren transformaciones complejas (limpiar, deduplicar, validar). <strong>3.</strong> El proceso se repite automáticamente sin intervención humana. <strong>4.</strong> Se manejan millones de registros. <strong>5.</strong> Se necesita trazabilidad y auditoría de cada ejecución. <strong>6.</strong> Migraciones de plataforma con historial complejo. Regla: si el ETL se repite o tiene múltiples fuentes → SSIS siempre.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">10</div><p>¿Cómo influye la elección de edición de SQL Server en un proyecto de transformación digital?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>1.</strong> Escalabilidad: Enterprise crece sin límites; Standard tiene restricciones. <strong>2.</strong> IA: solo Enterprise incluye machine learning integrado. <strong>3.</strong> Costo (TCO): Enterprise puede ser decenas de miles de dólares por core — elegir mal eleva el presupuesto irracionalmente. <strong>4.</strong> Alta disponibilidad (Always On): solo Enterprise y Standard (limitado). <strong>5.</strong> Cumplimiento GDPR/HIPAA: seguridad avanzada solo en ediciones superiores. Roadmap natural: Express → Developer → Standard → Enterprise.</div></div>
+  </div>
+
+  <!-- Prácticas -->
+  <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--ink);margin:36px 0 16px;display:flex;align-items:center;gap:10px">
+    <span style="width:36px;height:36px;background:linear-gradient(135deg,#06B6D4,#10B981);border-radius:10px;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem">💻</span>
+    Preguntas Prácticas
+  </div>
+
+  <div class="rv">
+    <div class="act"><div class="aq"><div class="anum">1</div><p>Conectarse a SQL Server en la nube con dominio empresa.com. ¿Qué valor colocar en Nombre del servidor?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol">Colocar el dominio completo: <code style="background:var(--p3);padding:2px 7px;border-radius:5px;font-family:monospace">empresa.com</code><br>Si es Azure SQL: <code style="background:var(--p3);padding:2px 7px;border-radius:5px;font-family:monospace">empresa.database.windows.net</code><br><strong>Autenticación:</strong> SQL Server Authentication o Azure Active Directory (no Windows Auth para servidores en la nube).</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">2</div><p>¿Cómo registrar un servidor local en el panel Servidores registrados de SSMS?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>1.</strong> Ver → Servidores Registrados. <strong>2.</strong> Expandir Motor de base de datos. <strong>3.</strong> Clic derecho en Grupos de servidores locales → Nuevo registro de servidor. <strong>4.</strong> Nombre del servidor: <code style="background:var(--p3);padding:2px 7px;border-radius:5px;font-family:monospace">localhost</code> o <code style="background:var(--p3);padding:2px 7px;border-radius:5px;font-family:monospace">.</code> <strong>5.</strong> Autenticación de Windows. <strong>6.</strong> Clic Probar → Guardar.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">3</div><p>Proyecto de migración: verificar usuarios en msdb. ¿Qué consulta ejecutar?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><div class="code"><span class="kw">USE</span> msdb<br><span class="kw">GO</span><br><span class="kw">SELECT</span> * <span class="kw">FROM</span> sys.sysusers<br><span class="kw">GO</span></div><code>sys.sysusers</code> retorna todos los usuarios de la BD actual con nombre, id, tipo y SID.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">4</div><p>¿Qué instrucción analiza qué objetos contiene la base model?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><div class="code"><span class="kw">USE</span> model<br><span class="kw">GO</span><br><span class="fn">EXECUTE</span> sp_help<br><span class="kw">GO</span></div><code>sp_help</code> sin parámetros lista todos los objetos de la BD actual: tablas, vistas, procedimientos, funciones y tipos de datos. <strong>model</strong> es la plantilla base para nuevas BD.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">5</div><p>Mostrar las tablas de la base Northwind en SSMS. ¿Cómo?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>Visual:</strong> Explorador de Objetos → Northwind → Tablas.<br><strong>T-SQL:</strong><div class="code"><span class="kw">USE</span> Northwind<br><span class="kw">GO</span><br><span class="kw">SELECT</span> TABLE_NAME <span class="kw">FROM</span> INFORMATION_SCHEMA.TABLES<br><span class="kw">WHERE</span> TABLE_TYPE = <span class="st">'BASE TABLE'</span><br><span class="kw">ORDER BY</span> TABLE_NAME</div></div></div>
+
+    <div class="act"><div class="aq"><div class="anum">6</div><p>¿Cómo cargar y ejecutar el script instnwnd.sql para crear Northwind?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>1.</strong> Archivo → Abrir → Archivo. <strong>2.</strong> Navegar a carpeta DB → seleccionar instnwnd.sql → Abrir. <strong>3.</strong> Presionar F5 o clic en Ejecutar. <strong>4.</strong> Esperar ejecución completa. <strong>5.</strong> Explorador de objetos → clic derecho en Bases de datos → Actualizar. <strong>6.</strong> Verificar que aparece <strong>Northwind</strong> en la lista.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">7</div><p>¿Qué consulta ejecutar para conocer la versión de SQL Server instalada?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><div class="code"><span class="cm">-- Versión completa</span><br><span class="kw">SELECT</span> @@VERSION<br><br><span class="cm">-- Detallado (para informes)</span><br><span class="kw">SELECT</span> SERVERPROPERTY(<span class="st">'ProductVersion'</span>) <span class="kw">AS</span> Version,<br>       SERVERPROPERTY(<span class="st">'Edition'</span>) <span class="kw">AS</span> Edicion</div></div></div>
+
+    <div class="act"><div class="aq"><div class="anum">8</div><p>¿Cómo listar todos los procedimientos almacenados de Northwind en SSMS?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><div class="code"><span class="kw">USE</span> Northwind<br><span class="kw">GO</span><br><span class="kw">SELECT</span> name, create_date, modify_date<br><span class="kw">FROM</span> sys.procedures<br><span class="kw">ORDER BY</span> name</div><strong>Visual:</strong> Explorador → Northwind → Programación → Procedimientos almacenados.</div></div>
+
+    <div class="act"><div class="aq"><div class="anum">9</div><p>Proyecto de auditoría: verificar el modo de autenticación del servidor. ¿Cómo?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><strong>Visual:</strong> Explorador → clic derecho en el servidor → Propiedades → Seguridad → Autenticación del servidor.<div class="code"><span class="cm">-- 1 = Solo Windows · 0 = Modo Mixto</span><br><span class="kw">SELECT</span> SERVERPROPERTY(<span class="st">'IsIntegratedSecurityOnly'</span>) <span class="kw">AS</span> SoloWindows</div></div></div>
+
+    <div class="act"><div class="aq"><div class="anum">10</div><p>¿Cómo identificar la RAM del servidor donde corre SQL Server?</p></div>
+    <button class="btn-s" onclick="togS(this)"><i class="fas fa-lightbulb"></i> Ver Respuesta</button>
+    <div class="sol"><div class="code"><span class="cm">-- RAM total del sistema</span><br><span class="kw">SELECT</span> total_physical_memory_kb / 1024 <span class="kw">AS</span> RAM_Total_MB,<br>       available_physical_memory_kb / 1024 <span class="kw">AS</span> RAM_Libre_MB<br><span class="kw">FROM</span> sys.dm_os_sys_memory<br><br><span class="cm">-- RAM en uso por SQL Server</span><br><span class="kw">SELECT</span> physical_memory_in_use_kb / 1024 <span class="kw">AS</span> RAM_SQL_MB<br><span class="kw">FROM</span> sys.dm_os_process_memory</div><strong>Visual:</strong> Propiedades del servidor → General → Memoria.</div></div>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ GOLDEN (JUNGKOOK) ══ -->
+<section id="golden" class="sec" style="background:var(--ink)">
+<div class="sec-inner">
+  <div class="sec-eyebrow" style="color:var(--gold)"><span style="display:inline-block;width:20px;height:1px;background:var(--gold)"></span> Golden Summary</div>
+  <h2 class="sec-h" style="color:#fff">El Resumen <em style="color:var(--gold)">Dorado</em></h2>
+
+  <div class="member-card rv" style="background:rgba(255,255,255,.05);border-color:rgba(245,158,11,.2)">
+    <div class="m-gif"><img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExa3o0cXdnd2g0bzBuOHUycXdrZHI4enNnamEzYjFlNGtuYmJna2lueCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LMbJJ6XudS5cRHaGJ7/giphy.gif" alt="JUNGKOOK"></div>
+    <div>
+      <div class="m-name" style="color:#fff">JUNGKOOK — Jeon Jungkook</div>
+      <div class="m-role" style="color:var(--gold)">Golden Summary · Cierre del Capítulo 1</div>
+      <div class="m-quote" style="color:#9ca3af;border-color:rgba(245,158,11,.3)">"Estimado profesor, broche de oro. Todo lo esencial, en un vistazo."</div>
+    </div>
+  </div>
+
+  <div class="gold-grid rv">
+    <div class="gc">
+      <h4><i class="fas fa-database"></i> SQL Server 2022</h4>
+      <ul>
+        <li>RDBMS de Microsoft — versión más reciente</li>
+        <li>Windows · Linux · Azure (plataforma híbrida)</li>
+        <li>IA integrada, seguridad avanzada, escalabilidad horizontal</li>
+      </ul>
+    </div>
+    <div class="gc">
+      <h4><i class="fas fa-lightbulb"></i> Conceptos Core</h4>
+      <ul>
+        <li>OLTP: transacciones rápidas en tiempo real</li>
+        <li>OLAP: análisis multidimensional en cubos</li>
+        <li>Data Warehouse: repositorio analítico integrado</li>
+        <li>E-Commerce: B2B · B2C · C2B · C2C</li>
+      </ul>
+    </div>
+    <div class="gc">
+      <h4><i class="fas fa-cubes"></i> Ecosistema</h4>
+      <ul>
+        <li>Database Engine → núcleo relacional</li>
+        <li>SSAS → cubos OLAP y Business Intelligence</li>
+        <li>SSRS → reportes y publicación</li>
+        <li>SSIS → ETL y migración de datos</li>
+      </ul>
+    </div>
+    <div class="gc">
+      <h4><i class="fas fa-layer-group"></i> 5 Ediciones</h4>
+      <ul>
+        <li>Enterprise: máximas capacidades, producción crítica</li>
+        <li>Developer: igual a Enterprise, solo desarrollo</li>
+        <li>Express: gratuita, para aprender</li>
+      </ul>
+    </div>
+    <div class="gc">
+      <h4><i class="fas fa-desktop"></i> SSMS Esencial</h4>
+      <ul>
+        <li>Explorador de Objetos: navega el servidor completo</li>
+        <li>Servidores Registrados: gestiona conexiones</li>
+        <li>Panel de Código: editor T-SQL (F5 = Ejecutar)</li>
+      </ul>
+    </div>
+    <div class="gc">
+      <h4><i class="fas fa-code"></i> T-SQL Visto</h4>
+      <ul>
+        <li>USE msdb / USE model</li>
+        <li>EXECUTE sp_help</li>
+        <li>SELECT * FROM sys.sysusers</li>
+        <li>SELECT @@VERSION</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <p>💜 <strong>BTS × SQL Server 2022</strong> — Universidad Peruana Los Andes</p>
+  <p style="margin-top:6px;opacity:.5">Ing. Raúl Fernández Bejarano · Capítulo 1 · Interactive Learning Experience</p>
+</footer>
+
+</div><!-- #main -->
+
+<!-- ══ MODALS ══ -->
+<div class="ov" id="m1" onclick="ov_cl(event,'m1')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('m1')"><i class="fas fa-times"></i></button>
+  <h3>Microsoft SQL Server 2022</h3>
+  <p>RDBMS desarrollado por Microsoft — la versión más reciente. Ofrece mejoras sustanciales frente a versiones anteriores.</p>
+  <div class="hl"><strong>Plataformas:</strong> Windows · Linux · Nube (Azure) — verdadera plataforma híbrida.</div>
+  <p><strong>Novedades v2022:</strong></p>
+  <ul><li>IA integrada con Azure Machine Learning</li><li>Seguridad mejorada y control de acceso granular</li><li>Mayor escalabilidad horizontal</li><li>Rendimiento optimizado con nuevo motor de consultas</li><li>Soporte nativo para cargas de trabajo en la nube</li></ul>
   </div>
 </div>
 
-<div id="m-sgbd" class="ov" onclick="closeM(this)">
-  <div class="m-box" onclick="event.stopPropagation()">
-    <button class="m-cls" onclick="closeAllM()"><i class="fas fa-times"></i></button>
-    <h3 style="font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:14px; color:var(--p)"><i class="fas fa-sliders-h"></i> Sistema de Gestión de Base de Datos (SGBD)</h3>
-    <p style="font-size:.88rem; color:#444; line-height:1.75">El SGBD (o RDBMS por sus siglas en inglés de Sistema de Gestión de Bases de Datos Relacionales) es una capa de software compleja e inteligente que actúa como intermediario absoluto entre las bases de datos físicas guardadas en el disco duro y los usuarios finales o aplicaciones externas. Su función es administrar de forma segura los derechos de acceso de los usuarios, controlar la concurrencia para evitar que dos personas sobrescriban el mismo dato simultáneamente, optimizar de manera automática las consultas mediante planes de ejecución avanzados y garantizar la absoluta integridad estructural y consistencia de toda la información corporativa.</p>
+<div class="ov" id="m2" onclick="ov_cl(event,'m2')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('m2')"><i class="fas fa-times"></i></button>
+  <h3>OLTP — On-Line Transaction Processing</h3>
+  <p>Técnica de procesamiento de transacciones en tiempo real para gran volumen de operaciones pequeñas y rápidas.</p>
+  <div class="hl"><strong>Propiedades ACID:</strong> Atomicidad · Consistencia · Aislamiento · Durabilidad</div>
+  <ul><li>Transacciones procesadas inmediatamente</li><li>Alta concurrencia de usuarios simultáneos</li><li>Alta velocidad de acceso a los datos</li><li>Arquitectura de BD relacional normalizada</li></ul>
+  <p style="margin-top:12px"><strong>Casos de uso:</strong> Bancos, aerolíneas, tiendas en línea, sistemas POS.</p>
   </div>
 </div>
 
-<div id="m-model" class="ov" onclick="closeM(this)">
-  <div class="m-box" onclick="event.stopPropagation()">
-    <button class="m-cls" onclick="closeAllM()"><i class="fas fa-times"></i></button>
-    <h3 style="font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; margin-bottom:14px; color:var(--p)"><i class="fas fa-project-diagram"></i> Modelo de Datos Relacional</h3>
-    <p style="font-size:.88rem; color:#444; line-height:1.75">Un modelo de datos relacional es una metodología de diseño basada en la teoría matemática de conjuntos, popularizada por Edgar F. Codd. Define un conjunto estricto de reglas conceptuales y lógicas para describir cómo se estructurarán y conectarán las entidades dentro del sistema. En este modelo, los datos se visualizan estrictamente como relaciones matemáticas expresadas en forma de tablas bidimensionales. Se imponen restricciones de integridad semántica de nivel superior, como Claves Primarias (Primary Keys) para la unicidad de registros y Claves Foráneas (Foreign Keys) para asegurar relaciones lógicas válidas y consistentes entre diferentes tablas.</p>
+<div class="ov" id="m3" onclick="ov_cl(event,'m3')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('m3')"><i class="fas fa-times"></i></button>
+  <h3>OLAP — On-Line Analytical Processing</h3>
+  <p>Técnica para analizar grandes volúmenes de datos multidimensionales organizados en cubos.</p>
+  <div class="hl"><strong>Estructura:</strong> Cubos con dimensiones (tiempo, producto, región) que permiten análisis desde múltiples perspectivas simultáneas.</div>
+  <ul><li>Gran volumen de datos históricos</li><li>Consultas complejas y analíticas (MDX)</li><li>Arquitectura multidimensional</li><li>Pre-cálculo de agregaciones para alta velocidad</li></ul>
+  <p style="margin-top:12px"><strong>Casos de uso:</strong> Business Intelligence, finanzas, reportes ejecutivos estratégicos.</p>
   </div>
 </div>
 
+<div class="ov" id="m4" onclick="ov_cl(event,'m4')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('m4')"><i class="fas fa-times"></i></button>
+  <h3>Data Warehouse — Almacén de Datos</h3>
+  <p>Sistema de almacenamiento diseñado para soportar el análisis y la toma de decisiones estratégicas.</p>
+  <div class="hl"><strong>Fuentes:</strong> Sistemas transaccionales + CRM + ERP + fuentes externas → integrados en un solo repositorio vía SSIS.</div>
+  <ul><li>Datos históricos consolidados de múltiples fuentes</li><li>Arquitectura dimensional (estrella o copo de nieve)</li><li>Optimizado para consultas analíticas complejas</li><li>Diferente a BD transaccional: análisis, no operaciones</li></ul>
+  </div>
+</div>
+
+<div class="ov" id="m5" onclick="ov_cl(event,'m5')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('m5')"><i class="fas fa-times"></i></button>
+  <h3>E-Commerce — Tipos</h3>
+  <p>Compra y venta de bienes y servicios a través de Internet. Ha transformado la economía global.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+    <div style="background:var(--p3);padding:14px;border-radius:12px"><strong style="color:var(--p)">B2B</strong><br><span style="font-size:.8rem;color:#666">Business to Business<br>Empresa → Empresa</span></div>
+    <div style="background:#fce7f3;padding:14px;border-radius:12px"><strong style="color:#ec4899">B2C</strong><br><span style="font-size:.8rem;color:#666">Business to Consumer<br>Empresa → Consumidor</span></div>
+    <div style="background:#ecfdf5;padding:14px;border-radius:12px"><strong style="color:#10B981">C2B</strong><br><span style="font-size:.8rem;color:#666">Consumer to Business<br>Consumidor → Empresa</span></div>
+    <div style="background:#fff7ed;padding:14px;border-radius:12px"><strong style="color:#F59E0B">C2C</strong><br><span style="font-size:.8rem;color:#666">Consumer to Consumer<br>Entre consumidores</span></div>
+  </div>
+  <p><strong>Ejemplos:</strong> Tiendas en línea, marketplaces, pagos digitales, marketing digital.</p>
+  </div>
+</div>
+
+<div class="ov" id="m6" onclick="ov_cl(event,'m6')">
+  <div class="mbox" style="max-width:720px"><button class="mcls" onclick="cl_m('m6')"><i class="fas fa-times"></i></button>
+  <h3>OLTP vs OLAP vs Data Warehouse</h3>
+  <div class="tbl" style="margin-top:16px">
+    <table>
+      <thead><tr><th>Criterio</th><th>OLTP</th><th>OLAP</th><th>Data Warehouse</th></tr></thead>
+      <tbody>
+        <tr><td>Objetivo</td><td>Operaciones diarias</td><td>Análisis estratégico</td><td>Repositorio analítico</td></tr>
+        <tr><td>Velocidad</td><td>Alta (ms)</td><td>Media-lenta</td><td>Variable</td></tr>
+        <tr><td>Estructura</td><td>Relacional normalizada</td><td>Cubos multidimensionales</td><td>Dimensional (estrella)</td></tr>
+        <tr><td>Usuarios</td><td>Personal operativo</td><td>Analistas</td><td>Ejecutivos</td></tr>
+        <tr><td>Herramienta SQL</td><td>Database Engine</td><td>SSAS</td><td>SSAS + SSIS</td></tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+</div>
+
+<!-- SSMS Modals -->
+<div class="ov" id="ms1" onclick="ov_cl(event,'ms1')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('ms1')"><i class="fas fa-times"></i></button>
+  <h3>Ejercicio 1.1 — Iniciar SSMS</h3>
+  <p><strong>1.</strong> Inicio → Microsoft SQL Server Tools 19 → SQL Server Management Studio 19</p>
+  <p><strong>2.</strong> En <em>Tipo de servidor</em> verificar: <strong>Motor de base de datos</strong></p>
+  <p><strong>3.</strong> En <em>Nombre del servidor</em> colocar según contexto:</p>
+  <div class="hl">
+    Nombre del equipo (ej: PC02) · IP (ej: 192.168.1.2) · Dominio en nube (ej: Luchosoft.com)<br>
+    Si es local: <code style="font-family:monospace;background:white;padding:2px 6px;border-radius:4px">localhost</code> · <code style="font-family:monospace;background:white;padding:2px 6px;border-radius:4px">(local)</code> · <code style="font-family:monospace;background:white;padding:2px 6px;border-radius:4px">.</code>
+  </div>
+  <p><strong>4.</strong> Seleccionar Autenticación → clic <strong>Conectar</strong></p>
+  </div>
+</div>
+
+<div class="ov" id="ms2" onclick="ov_cl(event,'ms2')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('ms2')"><i class="fas fa-times"></i></button>
+  <h3>Ejercicio 1.2 — Caja "Acerca de"</h3>
+  <p>Muestra versiones exactas de todos los componentes del ecosistema SQL Server instalados.</p>
+  <p><strong>1.</strong> Menú <strong>Ayuda</strong> → <strong>Acerca de...</strong></p>
+  <p><strong>2.</strong> Observar las versiones de SSMS, Database Engine, SSAS, SSRS, MEAC.</p>
+  <p><strong>3.</strong> Clic <strong>Aceptar</strong> para cerrar.</p>
+  <div class="hl"><strong>Utilidad:</strong> Diagnóstico técnico, soporte y verificación de compatibilidad entre componentes.</div>
+  <p><strong>Ej. 1.3 — Mostrar/Ocultar paneles:</strong> Menú Ver → buscar el panel (F8 = Explorador, F7 = Detalles, Ctrl+Alt+G = Servidores). Para ocultar: menú Ver o botón Cerrar del panel.</p>
+  </div>
+</div>
+
+<div class="ov" id="ms3" onclick="ov_cl(event,'ms3')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('ms3')"><i class="fas fa-times"></i></button>
+  <h3>Ejercicio 1.4 — Explorador de Objetos</h3>
+  <p>El <strong>Explorador de objetos</strong> navega: Bases de datos · Seguridad · Objetos de servidor · Replicación · Always On · Administración.</p>
+  <p><strong>1.</strong> Expandir <strong>Bases de datos → Bases de datos del sistema</strong></p>
+  <p><strong>2.</strong> Seleccionar <strong>master</strong></p>
+  <p><strong>3.</strong> Menú Ver → <strong>Detalles del Explorador de objetos</strong> (muestra detalle del elemento)</p>
+  <p><strong>4.</strong> Expandir master → <strong>Tablas → Tablas del sistema</strong> para ver la lista completa</p>
+  <div class="hl"><strong>Panel Detalles:</strong> muestra el contenido del nodo seleccionado. Acceso rápido: F7.</div>
+  </div>
+</div>
+
+<div class="ov" id="ms4" onclick="ov_cl(event,'ms4')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('ms4')"><i class="fas fa-times"></i></button>
+  <h3>Ejercicio 1.5 — Servidores Registrados</h3>
+  <p><strong>1.</strong> Ver → Servidores Registrados</p>
+  <p><strong>2.</strong> Expandir Motor de base de datos</p>
+  <p><strong>3.</strong> Clic derecho en Grupos de servidores locales → <strong>Nuevo registro de servidor</strong></p>
+  <p><strong>4.</strong> Nombre del servidor: <code style="font-family:monospace;background:var(--p3);padding:2px 6px;border-radius:4px">localhost</code></p>
+  <p><strong>5.</strong> Autenticación: <strong>Autenticación de Windows</strong></p>
+  <p><strong>6.</strong> Aceptar nombre sugerido para el servidor registrado</p>
+  <p><strong>7.</strong> Clic <strong>Probar</strong> → confirmar conectividad → clic <strong>Guardar</strong></p>
+  </div>
+</div>
+
+<div class="ov" id="ms5" onclick="ov_cl(event,'ms5')">
+  <div class="mbox"><button class="mcls" onclick="cl_m('ms5')"><i class="fas fa-times"></i></button>
+  <h3>Ejercicios 1.6 & 1.7 — Panel de Código + Northwind</h3>
+  <p>El <strong>Panel de Código</strong> es el editor T-SQL. Activar con: <strong>Nueva consulta</strong>.</p>
+  <p><strong>Ejercicio 1.6 — Primeras consultas:</strong></p>
+  <div class="code"><span class="kw">USE</span> msdb  <span class="cm">-- Seleccionar BD</span><br><span class="kw">GO</span><br><span class="fn">EXECUTE</span> sp_help  <span class="cm">-- Listar objetos</span><br><span class="kw">GO</span><br><span class="kw">SELECT</span> * <span class="kw">FROM</span> sys.sysusers  <span class="cm">-- Ver usuarios</span></div>
+  <p>Presionar <strong>F5</strong> o clic en Ejecutar. El panel Mensajes confirmará: <em>"Los comandos se han completado correctamente."</em></p>
+  <p style="margin-top:12px"><strong>Ejercicio 1.7 — Script Northwind:</strong></p>
+  <p><strong>1.</strong> Archivo → Abrir → Archivo → carpeta DB → seleccionar <strong>instnwnd.sql</strong> → Abrir</p>
+  <p><strong>2.</strong> F5 para ejecutar el script → esperar</p>
+  <p><strong>3.</strong> Explorador → Bases de datos → clic derecho → <strong>Actualizar</strong></p>
+  <p><strong>4.</strong> Verificar que aparece <strong>Northwind</strong> en la lista</p>
+  </div>
+</div>
+
+<!-- ══ JS ══ -->
 <script>
-// CUSTOM CURSOR LOGIC (PRESERVED EXACTLY)
-const c=document.getElementById('cur'),cb=document.getElementById('cur-b');
-document.addEventListener('mousemove',e=>{
-  c.style.top=e.clientY+'px'; c.style.left=e.clientX+'px';
-  cb.style.top=(e.clientY-14)+'px'; cb.style.left=(e.clientX-14)+'px';
-});
-document.querySelectorAll('button, a, .card, .ac-hd, .m-cls, .sol-btn').forEach(el=>{
-  el.addEventListener('mouseenter',()=>document.body.classList.add('hovered'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovered'));
+// CURSOR
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur2.style.transform=`translate(${mx-3}px,${my-3}px)`});
+(function anim(){cx+=(mx-cx)*.18;cy+=(my-cy)*.18;cur.style.transform=`translate(${cx-20}px,${cy-20}px)`;requestAnimationFrame(anim)})();
+document.querySelectorAll('button,a,[onclick]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='60px';cur.style.height='60px';cur.style.background='rgba(124,58,237,.1)';cur.style.borderColor='var(--p)'});
+  el.addEventListener('mouseleave',()=>{cur.style.width='40px';cur.style.height='40px';cur.style.background='transparent';cur.style.borderColor='var(--p)'});
 });
 
-// SPLASH CONTROLLER
+// SPLASH
 function go(){
   document.getElementById('splash').classList.add('out');
-  document.getElementById('main').classList.add('on');
+  document.body.style.overflow='auto';
+  setTimeout(()=>{
+    document.getElementById('splash').style.display='none';
+    document.getElementById('main').classList.add('on');
+  },800);
 }
+document.body.style.overflow='hidden';
 
-// MODAL ADMINISTRATIVE CONTROL
-function openM(id){document.getElementById(id).classList.add('on')}
-function closeM(ov){ov.classList.remove('on')}
-function closeAllM(){document.querySelectorAll('.ov').forEach(m=>m.classList.remove('on'))}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAllM()});
+// MODALS
+function open_m(id){document.getElementById(id).classList.add('on')}
+function cl_m(id){document.getElementById(id).classList.remove('on')}
+function ov_cl(e,id){if(e.target.classList.contains('ov'))cl_m(id)}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.ov.on').forEach(m=>m.classList.remove('on'))});
 
-// SOLUTION TOGGLE (ACTIVITY HUB)
+// SOLUTION TOGGLE
 function togS(btn){
   const box=btn.nextElementSibling,on=box.classList.contains('on');
   box.classList.toggle('on');
-  btn.innerHTML=on?'<i class="fas fa-lightbulb"></i> Ver Respuesta Académica':'<i class="fas fa-eye-slash"></i> Ocultar Solución';
+  btn.innerHTML=on?'<i class="fas fa-lightbulb"></i> Ver Respuesta':'<i class="fas fa-eye-slash"></i> Ocultar';
 }
 
 // ACCORDION
 function togAc(hd){
   const bd=hd.nextElementSibling,isOn=bd.classList.contains('on');
-  if(isOn){
-    bd.classList.remove('on');
-    hd.classList.remove('open');
-  }else{
-    bd.classList.add('on');
-    hd.classList.add('open');
-  }
+  document.querySelectorAll('.ac-bd').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.ac-hd').forEach(h=>h.classList.remove('open'));
+  if(!isOn){bd.classList.add('on');hd.classList.add('open')}
 }
 
 // REVEAL ON SCROLL
 const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');ro.unobserve(e.target)}}),{threshold:.08,rootMargin:'0px 0px -24px 0px'});
 document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
 
-// NAVIGATION SCROLL TRACKING
-const secs=['hero','s1','s2','s3','s4','s5','s6'];
+// ACTIVE NAV
+const secs=['hero','s1','s2','s3','s4','s5','s6','golden'];
 window.addEventListener('scroll',()=>{
   const pos=window.scrollY+130;
   secs.forEach(id=>{
     const el=document.getElementById(id);
-    if(el && pos>=el.offsetTop && pos<el.offsetTop+el.offsetHeight){
-      document.querySelectorAll('.nl').forEach(ln=>ln.classList.remove('act'));
-      const tgt=document.querySelector(`.nl[href="#${id}"]`);
-      if(tgt)tgt.classList.add('act');
+    const nl=document.querySelector(`.nl[href="#${id}"]`);
+    if(!el||!nl)return;
+    if(el.offsetTop<=pos&&el.offsetTop+el.offsetHeight>pos){
+      document.querySelectorAll('.nl').forEach(n=>n.classList.remove('act'));
+      nl.classList.add('act');
     }
   });
+});
+</script>
+</body>
+</html>
+HTMLEOF
+echo "Done"
 });
 </script>
 </body>
